@@ -1,0 +1,36 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README "Robotics premise": a plant scheduling/logistics coordination robot
+;; schedules a rubber-products machine crew, logs runs/inventory and
+;; coordinates raw-rubber/compound supply; it never operates molding, extrusion
+;; or curing equipment. Its physical work is plant logistics: taking cured
+;; parts away from the press once they are cool enough to handle, and moving
+;; compound pallets to the mill.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-8141"
+ :cases
+ [{:id :cured-part-cool-before-pickup
+   :kind :thermal
+   :procedure "a 20 mm cured rubber part demoulded at 160 °C cools in still air; the gripper may take it when its surface is cool enough"
+   :params {:thickness-m 0.02 :conductivity-w-mk 0.25 :density-kg-m3 1200.0 :specific-heat-j-kgk 1900.0
+            :t0-c 160.0 :t-hot-c 25.0 :h-front-w-m2k 10.0 :t-back-ambient-c 25.0 :h-back-w-m2k 10.0
+            :threshold-c 200.0 :nodes 21}
+   :sweep {:param :duration-s :values [300.0 600.0 1200.0 1800.0 3600.0]}
+   :quantity :final-back-c
+   :limit {:max 60.0 :basis "estimate: 60 °C surface ceiling for the gripper pads and for the part to stay dimensionally stable"}
+   :boundary {:lo 60.0 :hi 7200.0}}
+  {:id :compound-pallet-to-mill
+   :kind :transport
+   :procedure "pallet AMR carries a pallet of rubber compound slabs from the store to the mixing mill"
+   :params {:mass-kg 250.0 :distance-m 60.0 :v-max-mps 1.0 :a-max-mps2 0.3
+            :brake-decel-mps2 1.0 :drive-force-n 600.0 :crr 0.02
+            :cog-height-m 0.30 :payload-cog-height-m 0.50 :support-half-length-m 0.50
+            :max-time-s 1200.0}
+   :sweep {:param :payload-kg :values [200.0 500.0 800.0 1100.0 1500.0]}
+   :quantity :cycle-time-s
+   :limit {:max 75.0 :basis "estimate: one pallet leg within the mill's batch changeover"}
+   :boundary {:lo 100.0 :hi 3000.0}}]}
