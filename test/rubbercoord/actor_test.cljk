@@ -1,5 +1,5 @@
 (ns rubbercoord.actor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [rubbercoord.actor :as actor]
             [rubbercoord.store :as store]))
 

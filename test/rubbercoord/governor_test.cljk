@@ -1,5 +1,5 @@
 (ns rubbercoord.governor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [rubbercoord.store :as store]
             [rubbercoord.advisor :as advisor]
             [rubbercoord.governor :as governor]))
